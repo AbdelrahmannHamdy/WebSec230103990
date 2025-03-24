@@ -5,7 +5,7 @@ use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TranscriptController;
-use App\Http\Controllers\CoursesController;
+use App\Http\Controllers\PurchaseController;
 
 
 Route::get('register', [UsersController::class, 'register'])->name('register');
@@ -27,6 +27,9 @@ Route::get('products', [ProductsController::class, 'list'])->name('products_list
 Route::get('products/edit/{product?}', [ProductsController::class, 'edit'])->name('products_edit');
 Route::post('products/save/{product?}', [ProductsController::class, 'save'])->name('products_save');
 Route::get('products/delete/{product}', [ProductsController::class, 'delete'])->name('products_delete');
+Route::post('/products/{product}/purchase', [ProductsController::class, 'purchase'])->name('products_purchase');
+Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases_list')->middleware('auth');
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -59,19 +62,8 @@ Route::middleware('auth')->group(function () {
 
 
 /////////////////////////////////////
-// عرض قائمة الدورات
-Route::get('courses', [CoursesController::class, 'list'])->name('courses_list');
-
-// عرض نموذج إضافة/تعديل دورة
-Route::get('courses/edit/{course?}', [CoursesController::class, 'edit'])->name('courses_edit');
-
-// حفظ بيانات الدورة
-Route::post('courses/save/{course?}', [CoursesController::class, 'save'])->name('courses_save');
-
-// تسجيل طالب في دورة
-Route::post('courses/enroll/{course}', [CoursesController::class, 'enrollStudent'])
-    ->name('courses_enroll_student')
-    ->middleware('auth');
-
-// حذف دورة
-Route::get('courses/delete/{course}', [CoursesController::class, 'delete'])->name('courses_delete');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/purchase/{productId}', [PurchaseController::class, 'purchase'])->name('purchase');
+    Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
+    Route::get('/purchases-list', [PurchaseController::class, 'index'])->name('purchases_list');
+});

@@ -72,5 +72,34 @@ class ProductsController extends Controller {
 
 		return redirect()->route('products_list');
 	}
+	public function purchase(Request $request, Product $product) {
+		
+		if (!auth()->user()) {
+			return redirect('/');
+		}
+	
+		
+		$user = auth()->user();
+		if ($user->credit < $product->price) {
+			return redirect()->back()->withErrors(['error' => 'رصيدك غير كافٍ لشراء هذا المنتج.']);
+		}
+	
+		
+		if ($product->stock <= 0) {
+			return redirect()->back()->withErrors(['error' => 'المنتج غير متوفر في المخزون.']);
+		}
+	
+		
+		$user->credit -= $product->price;
+		$user->save();
+	
+		
+		$product->stock -= 1;
+		$product->save();
+	
+		
+	
+		return redirect()->route('products_list')->with('success', 'تم شراء المنتج بنجاح!');
+	}
 } 
 
