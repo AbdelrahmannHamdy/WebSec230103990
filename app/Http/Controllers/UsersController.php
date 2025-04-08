@@ -195,4 +195,29 @@ class UsersController extends Controller {
 
         return redirect(route('profile', ['user'=>$user->id]));
     }
+
+    public function index()
+{
+    // عرض العملاء فقط
+    $users = User::role('Customer')->get();
+    
+    return view('users.index', compact('users'));
+}
+
+public function chargeCustomer(Request $request, User $customer)
+{
+    // التحقق من الصلاحية
+    if (!auth()->user()->can('charge_customers')) {
+        abort(403);
+    }
+
+    $validated = $request->validate([
+        'amount' => 'required|numeric|min:0.01'
+    ]);
+
+    $customer->credit += $validated['amount'];
+    $customer->save();
+
+    return redirect()->back()->with('success', 'Credit charged!');
+}
 } 

@@ -63,7 +63,8 @@ Route::middleware('auth')->group(function () {
 
 /////////////////////////////////////
 Route::middleware(['auth'])->group(function () {
-    Route::get('/purchase/{productId}', [PurchaseController::class, 'purchase'])->name('purchase');
+    Route::post('/purchase/{product}', [PurchaseController::class, 'purchase'])->name('purchase');
     Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
-    Route::get('/purchases-list', [PurchaseController::class, 'index'])->name('purchases_list');
 });
+Route::get('/purchases-list', [PurchaseController::class, 'index'])->name('purchases_list');
+

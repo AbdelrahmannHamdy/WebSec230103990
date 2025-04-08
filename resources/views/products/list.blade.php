@@ -79,10 +79,10 @@
                     <div class="row mt-2">
                         <div class="col col-4">
                             @if(auth()->user() && auth()->user()->credit >= $product->price && $product->stock > 0)
-                                <form action="{{ route('products_purchase', $product->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="btn btn-primary form-control">Buy</button>
-                                </form>
+                            <form action="{{ route('purchase', $product->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="btn btn-primary form-control">Buy</button>
+                            </form>
                             @else
                                 <button class="btn btn-secondary form-control" disabled>
                                     @if(!auth()->user())
@@ -102,6 +102,26 @@
                             <a href="{{ route('products_edit', $product->id) }}" class="btn btn-warning form-control">Edit</a>
                         </div>
                         @endcan
+
+
+                        
+                        @can('manage_products')
+                        <a href="{{ route('products.create') }}" class="btn btn-success">Add Product</a>
+                        @endcan
+                        
+                        @can('manage_stock')
+                        <form action="{{ route('products.update', $product->id) }}" method="POST">
+                            @csrf
+                            <input type="number" name="stock" value="{{ $product->stock }}">
+                            <button type="submit">Update Stock</button>
+                        </form>
+                        @endcan
+
+
+
+
+
+
 
                         <!-- Delete Button -->
                         @can('delete_products')
